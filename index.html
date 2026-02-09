@@ -1051,21 +1051,32 @@
     // - Tocca la card per girarla
     // - Tocca di nuovo per richiuderla
     // =========================
-    (function(){
-      const cards = document.querySelectorAll('.card.flip');
-      cards.forEach(card => {
-        card.addEventListener('click', (e) => {
-          // Non flip quando clicchi bottoni/link dentro
-          if(e.target.closest('button') || e.target.closest('a')) return;
-          card.classList.toggle('open');
+   (function(){
+  const cards = document.querySelectorAll('.card.flip');
 
-          // Lazy render per STASERA: aggiorna solo quando è aperta
-          if(card.id === 'staseraCard' && card.classList.contains('open')){
-            window.__renderStasera && window.__renderStasera();
-          }
-        });
-      });
-    })();
+  cards.forEach(card => {
+    card.addEventListener('click', (e) => {
+      if(e.target.closest('button') || e.target.closest('a')) return;
+
+      const wasOpen = card.classList.contains('open');
+      card.classList.toggle('open');
+
+      // STASERA: quando APRI -> forza render
+      if(card.id === 'staseraCard' && !wasOpen){
+        window.__renderStasera && window.__renderStasera();
+      }
+
+      // STASERA: quando CHIUDI -> resetta il retro (così "si resetta" sempre)
+      if(card.id === 'staseraCard' && wasOpen){
+        const cont = document.getElementById('staseraContent');
+        if(cont) cont.innerHTML = '';
+        card.classList.remove('unlocked');
+        card.classList.add('locked');
+      }
+    });
+  });
+})();
+
 
 
     // =========================
