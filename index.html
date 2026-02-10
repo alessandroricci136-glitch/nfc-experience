@@ -948,7 +948,7 @@
         const now = new Date();
         const h = now.getHours();
         const m = now.getMinutes();
-        return (h > 16) || (h === 16 && m >= 37);
+        return (h > 12) || (h === 12 && m >= 30);
       }
 
       function locked(cont){
