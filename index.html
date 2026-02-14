@@ -839,268 +839,288 @@
     </div>
   </div>
 
-  <script>
-    // =========================
-    // Stars generation + parallax on scroll
-    // =========================
-    (function(){
-      const stars = document.getElementById('stars');
-      if(!stars) return;
+<script>
+  // =========================
+  // Stars generation + parallax on scroll
+  // =========================
+  (function () {
+    const stars = document.getElementById("stars");
+    if (!stars) return;
 
-      const count = 26;
-      const w = () => window.innerWidth;
-      const h = () => window.innerHeight;
+    const count = 26;
+    const h = () => window.innerHeight;
 
-      for(let i=0;i<count;i++){
-        const s = document.createElement('div');
-        s.className = 'star';
-        const x = Math.random() * 100;
-        const y = Math.random() * 100;
-        const size = (Math.random() < .15) ? 3 : 2;
-        s.style.left = x + '%';
-        s.style.top = y + '%';
-        s.style.width = size + 'px';
-        s.style.height = size + 'px';
-        s.style.opacity = String(0.45 + Math.random() * 0.55);
-        stars.appendChild(s);
-      }
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement("div");
+      s.className = "star";
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const size = Math.random() < 0.15 ? 3 : 2;
 
-      function onScroll(){
-        const hero = document.getElementById('hero');
-        if(!hero) return;
-        const rect = hero.getBoundingClientRect();
-        const prog = Math.min(Math.max(1 - rect.bottom / h(), 0), 1); // 0->1 as we scroll away
-        stars.style.transform = 'translateY(' + (-40 * prog) + 'px)';
-        stars.style.opacity = String(0.65 - 0.40 * prog);
-      }
-      document.addEventListener('scroll', onScroll, {passive:true});
-      onScroll();
-    })();
+      s.style.left = x + "%";
+      s.style.top = y + "%";
+      s.style.width = size + "px";
+      s.style.height = size + "px";
+      s.style.opacity = String(0.45 + Math.random() * 0.55);
+      stars.appendChild(s);
+    }
 
-    // =========================
-    // Cards: enter animation when in viewport
-    // =========================
-    (function(){
-      const cards = document.querySelectorAll('.card');
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if(e.isIntersecting){
-            e.target.classList.add('in');
+    function onScroll() {
+      const hero = document.getElementById("hero");
+      if (!hero) return;
+
+      const rect = hero.getBoundingClientRect();
+      const prog = Math.min(Math.max(1 - rect.bottom / h(), 0), 1); // 0->1 as we scroll away
+
+      stars.style.transform = "translateY(" + -40 * prog + "px)";
+      stars.style.opacity = String(0.65 - 0.4 * prog);
+    }
+
+    document.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  })();
+
+  // =========================
+  // Cards: enter animation when in viewport
+  // =========================
+  (function () {
+    const cards = document.querySelectorAll(".card");
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
             obs.unobserve(e.target);
           }
         });
-      }, { threshold: .18 });
+      },
+      { threshold: 0.18 }
+    );
 
-      cards.forEach(c => obs.observe(c));
-    })();
+    cards.forEach((c) => obs.observe(c));
+  })();
 
-    // =========================
-    // ORA: custom audio control
-    // =========================
-    (function(){
-      const audio = document.getElementById('audioEl');
-      const btn = document.getElementById('audioBtn');
-      const label = document.getElementById('audioLabel');
-      const dot = document.getElementById('audioDot');
-      const icon = document.getElementById('audioIcon');
+  // =========================
+  // ORA: custom audio control
+  // =========================
+  (function () {
+    const audio = document.getElementById("audioEl");
+    const btn = document.getElementById("audioBtn");
+    const label = document.getElementById("audioLabel");
+    const dot = document.getElementById("audioDot");
+    const icon = document.getElementById("audioIcon");
 
-      if(!audio || !btn) return;
+    if (!audio || !btn) return;
 
-      function setState(playing){
-        if(playing){
-          label.textContent = 'Pausa';
-          dot.classList.remove('paused');
-          icon.textContent = '❚❚';
+    function setState(playing) {
+      if (playing) {
+        label.textContent = "Pausa";
+        dot.classList.remove("paused");
+        icon.textContent = "❚❚";
+      } else {
+        label.textContent = "Riproduci";
+        dot.classList.add("paused");
+        icon.textContent = "▶";
+      }
+    }
+
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      try {
+        if (audio.paused) {
+          await audio.play();
+          setState(true);
         } else {
-          label.textContent = 'Riproduci';
-          dot.classList.add('paused');
-          icon.textContent = '▶';
-        }
-      }
-
-      btn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        try{
-          if(audio.paused){
-            await audio.play();
-            setState(true);
-          } else {
-            audio.pause();
-            setState(false);
-          }
-        } catch(err){
-          // Autoplay policy / gesture required
+          audio.pause();
           setState(false);
-          console.warn('Audio non avviabile senza gesto utente:', err);
         }
-      });
-
-      audio.addEventListener('ended', () => setState(false));
-      audio.addEventListener('pause', () => setState(false));
-      audio.addEventListener('play', () => setState(true));
-
-      setState(false);
-    })();
-
-    // =========================
-    // STASERA: time-gated content (sblocco alle 11:40)
-    // - Contenuto mostrato SOLO dopo il tap (flip aperto)
-    // =========================
-    (function(){
-      const dot = document.getElementById('staseraDot');
-      const card = document.getElementById('staseraCard');
-
-      function computeAfter(){
-        const now = new Date();
-        const h = now.getHours();
-        const m = now.getMinutes();
-        return (h > 12) || (h === 12 && m >= 30);
-      }
-
-      function locked(cont){
-        if(card){
-          card.classList.add('locked');
-          card.classList.remove('unlocked');
-        }
-        if(dot){
-          dot.style.background = 'rgba(160,170,220,.55)';
-          dot.style.boxShadow = 'none';
-        }
-        cont.innerHTML = `
-          <div class="locked-cover" style="opacity:1; transform:translateY(0);">
-            <div class="sigil" aria-hidden="true"></div>
-            <p style="margin:0">Non ancora. Ma ci siamo.</p>
-          </div>
-        `;
-      }
-
-      function unlocked(cont){
-        if(card){
-          card.classList.remove('locked');
-          card.classList.add('unlocked');
-        }
-        if(dot){
-          dot.style.background = 'var(--gold)';
-          dot.style.boxShadow = '0 0 14px rgba(255,214,160,.55)';
-        }
-        cont.innerHTML = `
-          <p class="muted" style="margin:0 0 12px">Adesso sì.</p>
-          <a class="btn btn-primary" href="https://open.spotify.com/playlist/6s70PQMniR41caxpyoWTVM?si=95b45d85d7d84f1b" target="_blank" rel="noopener noreferrer">Apri la playlist</a>
-        `;
-      }
-
-      function render(force=false){
-        const cont = document.getElementById('staseraContent');
-        if(!cont) return;
-
-        // niente anteprima: aggiorna solo se la card è aperta (o se forzato)
-        if(!force && card && !card.classList.contains('open')) return;
-
-        if(computeAfter()) unlocked(cont);
-        else locked(cont);
-      }
-
-      window.__renderStasera = () => render(true);
-      setInterval(() => render(false), 30000);
-    })();
-
-    // =========================
-    // PROSSIMA VOLTA: reveal
-    // =========================
-    (function(){
-      const reveal = document.getElementById('nextReveal');
-      const hidden = document.getElementById('nextHidden');
-      if(!reveal || !hidden) return;
-
-      reveal.addEventListener('click', (e) => {
-        e.preventDefault();
-        reveal.style.display = 'none';
-        hidden.classList.add('show');
-        hidden.setAttribute('aria-hidden', 'false');
-      });
-    })();
-
-    // =========================
-    // NON ADESSO: overlay open/close by outside tap or scroll
-    // =========================
-    (function(){
-      const btn = document.getElementById('nnBtn');
-      const overlay = document.getElementById('overlay');
-      const card = document.getElementById('overlayCard');
-
-      if(!btn || !overlay || !card) return;
-
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        overlay.classList.add('show');
-      });
-
-      function closeIfOutside(e){
-        if(overlay.classList.contains('show') && !card.contains(e.target)){
-          overlay.classList.remove('show');
-        }
-      }
-
-      overlay.addEventListener('mousedown', closeIfOutside);
-      overlay.addEventListener('touchstart', closeIfOutside, {passive:true});
-
-      document.addEventListener('scroll', () => {
-        if(overlay.classList.contains('show')){
-          overlay.classList.remove('show');
-        }
-      }, {passive:true});
-    })();
-
-    
-    // =========================
-    // Tap-to-reveal (flip cards)
-    // - Tocca la card per girarla
-    // - Tocca di nuovo per richiuderla
-    // =========================
-   (function(){
-  const cards = document.querySelectorAll('.card.flip');
-
-  cards.forEach(card => {
-    card.addEventListener('click', (e) => {
-      if(e.target.closest('button') || e.target.closest('a')) return;
-
-      const wasOpen = card.classList.contains('open');
-      card.classList.toggle('open');
-
-      // STASERA: quando APRI -> forza render
-      if(card.id === 'staseraCard' && !wasOpen){
-        window.__renderStasera && window.__renderStasera();
-      }
-
-      // STASERA: quando CHIUDI -> resetta il retro (così "si resetta" sempre)
-      if(card.id === 'staseraCard' && wasOpen){
-        const cont = document.getElementById('staseraContent');
-        if(cont) cont.innerHTML = '';
-        card.classList.remove('unlocked');
-        card.classList.add('locked');
+      } catch (err) {
+        // Autoplay policy / gesture required
+        setState(false);
+        console.warn("Audio non avviabile senza gesto utente:", err);
       }
     });
-  });
-})();
 
+    audio.addEventListener("ended", () => setState(false));
+    audio.addEventListener("pause", () => setState(false));
+    audio.addEventListener("play", () => setState(true));
 
+    setState(false);
+  })();
 
-    // =========================
-    // Final note appears when in viewport
-    // =========================
-    (function(){
-      const final = document.getElementById('final');
-      if(!final) return;
+  // =========================
+  // STASERA: time-gated content
+  // - Contenuto mostrato SOLO dopo il tap (flip aperto)
+  // =========================
+  (function () {
+    const dot = document.getElementById("staseraDot"); // può essere null: ok
+    const card = document.getElementById("staseraCard");
 
-      const obs = new IntersectionObserver(([entry]) => {
-        if(entry.isIntersecting){
-          final.classList.add('show');
+    function computeAfter() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+
+      // >>> CAMBIA QUI L'ORARIO (HH:MM) <<<
+      // esempio: sblocca alle 12:30
+      return h > 12 || (h === 12 && m >= 30);
+    }
+
+    function locked(cont) {
+      if (card) {
+        card.classList.add("locked");
+        card.classList.remove("unlocked");
+      }
+
+      if (dot) {
+        dot.style.background = "rgba(160,170,220,.55)";
+        dot.style.boxShadow = "none";
+      }
+
+      cont.innerHTML = `
+        <div class="locked-cover" style="opacity:1; transform:translateY(0);">
+          <div class="sigil" aria-hidden="true"></div>
+          <p style="margin:0">Non ancora. Ma ci siamo.</p>
+        </div>
+      `;
+    }
+
+    function unlocked(cont) {
+      if (card) {
+        card.classList.remove("locked");
+        card.classList.add("unlocked");
+      }
+
+      if (dot) {
+        dot.style.background = "var(--gold)";
+        dot.style.boxShadow = "0 0 14px rgba(255,214,160,.55)";
+      }
+
+      cont.innerHTML = `
+        <p class="muted" style="margin:0 0 12px">Adesso sì.</p>
+        <a class="btn btn-primary"
+           href="https://open.spotify.com/playlist/6s70PQMniR41caxpyoWTVM?si=95b45d85d7d84f1b"
+           target="_blank"
+           rel="noopener noreferrer">
+           Apri la playlist
+        </a>
+      `;
+    }
+
+    function render(force = false) {
+      const cont = document.getElementById("staseraContent");
+      if (!cont) return;
+
+      // niente anteprima: aggiorna solo se la card è aperta (o se forzato)
+      if (!force && card && !card.classList.contains("open")) return;
+
+      if (computeAfter()) unlocked(cont);
+      else locked(cont);
+    }
+
+    // chiamata quando apri la card
+    window.__renderStasera = () => render(true);
+
+    // se la card resta aperta, aggiorna ogni 30s
+    setInterval(() => render(false), 30000);
+  })();
+
+  // =========================
+  // PROSSIMA VOLTA: reveal
+  // =========================
+  (function () {
+    const reveal = document.getElementById("nextReveal");
+    const hidden = document.getElementById("nextHidden");
+    if (!reveal || !hidden) return;
+
+    reveal.addEventListener("click", (e) => {
+      e.preventDefault();
+      reveal.style.display = "none";
+      hidden.classList.add("show");
+      hidden.setAttribute("aria-hidden", "false");
+    });
+  })();
+
+  // =========================
+  // NON ADESSO: overlay open/close by outside tap or scroll
+  // =========================
+  (function () {
+    const btn = document.getElementById("nnBtn");
+    const overlay = document.getElementById("overlay");
+    const card = document.getElementById("overlayCard");
+
+    if (!btn || !overlay || !card) return;
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      overlay.classList.add("show");
+    });
+
+    function closeIfOutside(e) {
+      if (overlay.classList.contains("show") && !card.contains(e.target)) {
+        overlay.classList.remove("show");
+      }
+    }
+
+    overlay.addEventListener("mousedown", closeIfOutside);
+    overlay.addEventListener("touchstart", closeIfOutside, { passive: true });
+
+    document.addEventListener(
+      "scroll",
+      () => {
+        if (overlay.classList.contains("show")) {
+          overlay.classList.remove("show");
+        }
+      },
+      { passive: true }
+    );
+  })();
+
+  // =========================
+  // Tap-to-reveal (flip cards)  <<< PARTE "DI PRIMA"
+  // - Tocca la card per girarla
+  // - Tocca di nuovo per richiuderla
+  // - Quando apri STASERA, popola il retro
+  // =========================
+  (function () {
+    const cards = document.querySelectorAll(".card.flip");
+
+    cards.forEach((card) => {
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("button") || e.target.closest("a")) return;
+
+        card.classList.toggle("open");
+
+        if (card.id === "staseraCard" && card.classList.contains("open")) {
+          window.__renderStasera && window.__renderStasera();
+        }
+      });
+    });
+  })();
+
+  // =========================
+  // Final note appears when in viewport
+  // =========================
+  (function () {
+    const final = document.getElementById("final");
+    if (!final) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          final.classList.add("show");
           obs.disconnect();
         }
-      }, { threshold: .55 });
+      },
+      { threshold: 0.55 }
+    );
 
-      obs.observe(final);
-    })();
-  </script>
+    obs.observe(final);
+  })();
+</script>
+</body>
+</html>
+
 </body>
 </html>
