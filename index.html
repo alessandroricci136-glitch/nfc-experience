@@ -1,1126 +1,272 @@
 <!doctype html>
 <html lang="it">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow,noarchive" />
-  <meta name="referrer" content="no-referrer" />
-  <title>Esperienza Intima</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Esperienza Intima</title>
 
-  <!-- Fonts (CDN). Se vuoi offline, dimmelo e li incorporo. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Manrope:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
 
-  <style>
-    /* =========================================================
-      ESPERIENZA EMOTIVA (mobile-first)
-      - Apribile da NFC: impatto immediato
-      - Nessun contenuto informativo: è una mini-storia interattiva
-      - Palette: blu notte / indaco / viola + accenti oro tenue + rosa vellutato
-      - Motion lento (20–30s)
-    ========================================================= */
+    <style>
+        body {
+            margin: 0;
+            font-family: Manrope, sans-serif;
+            background: #0B1C2D;
+            color: white;
+        }
 
-    :root{
-      --night:#0B1C2D;
-      --indigo:#12193a;
-      --violet:#2b1a4a;
-      --violet2:#3b2a6b;
+        .wrap {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px 20px;
+        }
 
-      --rose:#ff7aa8;
-      --velvet:#c64a6c;
+        .card {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            perspective: 1200px;
+        }
 
-      --gold:#ffd6a0; /* oro tenue */
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --glass:rgba(255,255,255,.07);
-      --glass2:rgba(255,255,255,.10);
-      --border:rgba(255,255,255,.14);
+        .flip-inner {
+            transform-style: preserve-3d;
+            transition: transform .7s ease;
+            position: relative;
+        }
 
-      --shadow: 0 18px 40px rgba(0,0,0,.35);
-      --shadow-soft: 0 12px 28px rgba(0,0,0,.26);
-      --radius: 18px;
+        .card.open .flip-inner {
+            transform: rotateX(180deg);
+        }
 
-      --max: 920px;
-      --pad: 18px;
+        .flip-face {
+            backface-visibility: hidden;
+        }
 
-      --h1: clamp(34px, 7.2vw, 56px);
-      --h2: 14px;
-      --p: 15px;
+        .flip-back {
+            position: absolute;
+            inset: 0;
+            transform: rotateX(180deg);
+        }
 
-      --ease: cubic-bezier(.2,.8,.2,1);
-    }
+        .front-title {
+            font-family: Cinzel, serif;
+            font-size: 22px;
+            margin: 0 0 6px;
+        }
 
-    *{ box-sizing:border-box; }
-    html,body{ margin:0; padding:0; }
-    html{ scroll-behavior:smooth; }
-    body{
-      min-height:100vh;
-      background: var(--night);
-      color: var(--text);
-      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      overflow-x:hidden;
-    }
+        .front-sub {
+            opacity: .7;
+            margin: 0 0 10px;
+        }
 
-    /* background accents (global wow) */
-    .global-accents{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:0;
-      animation: fadeIn .6s ease-out forwards;
-      z-index:0;
-    }
-    .blob{
-      position:absolute;
-      filter: blur(56px);
-      border-radius:9999px;
-      opacity:.22;
-      transform: translateZ(0);
-      will-change: transform;
-    }
-    .blob.a{
-      width: 22rem; height: 22rem;
-      left: -6rem; top: -6rem;
-      background: #7c6fd1;
-      animation: floatA 22s ease-in-out infinite;
-    }
-    .blob.b{
-      width: 22rem; height: 22rem;
-      right: -7rem; bottom: -7rem;
-      background: #5970d6;
-      animation: floatB 26s ease-in-out infinite;
-    }
-    .blob.c{
-      width: 16rem; height: 16rem;
-      left: 50%; top: 55%;
-      transform: translate(-50%,-50%);
-      background: var(--gold);
-      filter: blur(72px);
-      opacity:.16;
-      animation: pulse 24s ease-in-out infinite;
-    }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-    @keyframes fadeIn{ to{ opacity:1; } }
-    @keyframes floatA{
-      0%{ transform:translate(0,0); }
-      25%{ transform:translate(26px,-14px); }
-      50%{ transform:translate(-14px,12px); }
-      75%{ transform:translate(10px,-8px); }
-      100%{ transform:translate(0,0); }
-    }
-    @keyframes floatB{
-      0%{ transform:translate(0,0); }
-      25%{ transform:translate(-18px,16px); }
-      50%{ transform:translate(12px,-10px); }
-      75%{ transform:translate(-10px,10px); }
-      100%{ transform:translate(0,0); }
-    }
-    @keyframes pulse{
-      0%,100%{ transform:translate(-50%,-50%) scale(1); }
-      50%{ transform:translate(-50%,-50%) scale(1.08); }
-    }
+        .btn-primary {
+            background: linear-gradient(90deg, #c64a6c, #ff7aa8);
+            color: white;
+        }
 
-    /* HERO */
-    .hero{
-      position:relative;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      z-index:1;
-    }
-    .hero-bg{
-      position:absolute; inset:0;
-      animation: gradientShift 26s ease-in-out infinite;
-      background:
-        radial-gradient(1200px 650px at 20% 30%, rgba(68, 51, 122, 0.35), transparent 60%),
-        radial-gradient(900px 650px at 80% 75%, rgba(30, 64, 175, 0.35), transparent 62%),
-        linear-gradient(135deg, var(--night) 0%, var(--indigo) 42%, #1a0f2e 100%);
-      transform: translateZ(0);
-      will-change: background;
-    }
-    @keyframes gradientShift{
-      0%{
-        background:
-          radial-gradient(1200px 650px at 18% 28%, rgba(68, 51, 122, 0.35), transparent 60%),
-          radial-gradient(900px 650px at 82% 76%, rgba(30, 64, 175, 0.35), transparent 62%),
-          linear-gradient(135deg, var(--night) 0%, var(--indigo) 42%, #1a0f2e 100%);
-      }
-      50%{
-        background:
-          radial-gradient(1200px 650px at 26% 34%, rgba(68, 51, 122, 0.35), transparent 60%),
-          radial-gradient(900px 650px at 74% 68%, rgba(30, 64, 175, 0.35), transparent 62%),
-          linear-gradient(135deg, var(--night) 0%, var(--indigo) 42%, #1a0f2e 100%);
-      }
-      100%{
-        background:
-          radial-gradient(1200px 650px at 18% 28%, rgba(68, 51, 122, 0.35), transparent 60%),
-          radial-gradient(900px 650px at 82% 76%, rgba(30, 64, 175, 0.35), transparent 62%),
-          linear-gradient(135deg, var(--night) 0%, var(--indigo) 42%, #1a0f2e 100%);
-      }
-    }
+        .btn-minimal {
+            background: rgba(255, 255, 255, .08);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, .15);
+        }
 
-    .hero-glow{
-      position:absolute; inset:0;
-      pointer-events:none;
-    }
-    .hero-glow::before{
-      content:"";
-      position:absolute;
-      left:50%; top:55%;
-      transform:translate(-50%,-50%);
-      width:min(680px, 88vw);
-      height:min(360px, 44vh);
-      background:
-        radial-gradient(closest-side at center, rgba(255,214,160,.22), transparent 62%),
-        radial-gradient(closest-side at 50% 65%, rgba(255,122,168,.14), transparent 62%);
-      filter: blur(2px);
-      opacity:.95;
-    }
+        .audio-wrap {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
 
-    /* Stars layer */
-    .stars{
-      position:absolute; inset:0;
-      pointer-events:none;
-      opacity:.65;
-      transform: translateY(0);
-      transition: transform .25s var(--ease), opacity .25s var(--ease);
-    }
-    .star{
-      position:absolute;
-      width:2px; height:2px;
-      border-radius:9999px;
-      background: rgba(255,255,255,.75);
-      box-shadow: 0 0 12px rgba(255,255,255,.22);
-      opacity:.8;
-    }
+        .audio-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(90deg, #c64a6c, #ff7aa8);
+            color: white;
+            font-size: 18px;
+        }
 
-    .hero-inner{
-      position:relative;
-      text-align:center;
-      padding: 0 22px;
-      max-width: 720px;
-    }
+        .audio-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #ffd6a0;
+            margin-right: 6px;
+        }
 
-    .hero-title{
-      font-family: Cinzel, serif;
-      font-size: var(--h1);
-      letter-spacing: .06em;
-      text-transform: lowercase;
-      margin:0;
-      opacity:0;
-      transform: translateY(10px) scale(.98);
-      animation: heroIn .9s var(--ease) .1s forwards;
-      text-shadow: 0 12px 26px rgba(0,0,0,.35);
-    }
-    .hero-sub{
-      margin: 14px 0 0 0;
-      font-size: clamp(14px, 3.8vw, 18px);
-      color: var(--muted);
-      opacity:0;
-      transform: translateY(14px);
-      animation: subIn .8s var(--ease) .8s forwards;
-    }
-    @keyframes heroIn{
-      to{ opacity:1; transform: translateY(0) scale(1); }
-    }
-    @keyframes subIn{
-      to{ opacity:1; transform: translateY(0); }
-    }
+        .audio-dot.paused {
+            background: #7a8abf;
+        }
 
-    .scroll-hint{
-      position:absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 12px;
-      color: rgba(255,255,255,.62);
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      opacity:.9;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .scroll-hint::after{
-      content:"";
-      width: 14px;
-      height: 14px;
-      border-right: 2px solid rgba(255,255,255,.55);
-      border-bottom: 2px solid rgba(255,255,255,.55);
-      transform: rotate(45deg);
-      animation: nudge 1.6s ease-in-out infinite;
-      margin-top:-2px;
-    }
-    @keyframes nudge{
-      0%,100%{ transform: rotate(45deg) translate(0,0); opacity:.55; }
-      50%{ transform: rotate(45deg) translate(2px,2px); opacity:.95; }
-    }
-
-    /* Layout wrapper */
-    .wrap{
-      position:relative;
-      z-index:2;
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 22px var(--pad) 60px;
-    }
-
-    /* Section cards */
-.card{
-      margin: 0 0 18px 0;
-
-      border-radius: var(--radius);
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      overflow:hidden;
-      position:relative;
-      transform: translateY(14px);
-      opacity: 0;
-      transition: transform .7s var(--ease), opacity .7s var(--ease), box-shadow .7s var(--ease);
-    }
-    .card.in{
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:-1px;
-      border-radius: var(--radius);
-      padding: 1px;
-      background: linear-gradient(135deg,
-        rgba(255,214,160,.45),
-        rgba(255,122,168,.25),
-        rgba(120,120,255,.20)
-      );
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity:.55;
-      pointer-events:none;
-    }
-
-    .card-body{
-      position:relative;
-      padding: 4px 2px;
-    }
-
-    .muted{
-      color: var(--muted);
-      font-size: var(--p);
-      line-height: 1.45;
-      margin: 0 0 12px;
-    }
-
-    /* Card variants */
-    .ora{
-      background:
-        radial-gradient(420px 240px at 20% 20%, rgba(255,214,160,.10), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
-      border: 1px solid rgba(255,214,160,.18);
-    }
-
-    .stasera{
-      background:
-        radial-gradient(520px 280px at 30% 20%, rgba(160,180,255,.10), transparent 62%),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-    }
-    .stasera.locked{
-      filter: saturate(.85);
-      opacity:.9;
-    }
-    .stasera.locked .locked-cover{
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .stasera.unlocked{
-      box-shadow: 0 18px 46px rgba(0,0,0,.38), 0 0 34px rgba(255,214,160,.14);
-    }
-    .stasera.unlocked::after{
-      content:"";
-      position:absolute;
-      inset:-30px;
-      background: radial-gradient(closest-side at 40% 20%, rgba(255,214,160,.22), transparent 60%);
-      filter: blur(10px);
-      opacity: 0;
-      animation: glowIn .9s var(--ease) forwards;
-      pointer-events:none;
-    }
-    @keyframes glowIn{ to{ opacity:1; } }
-
-    .next{
-      background:
-        radial-gradient(520px 280px at 10% 10%, rgba(255,122,168,.10), transparent 62%),
-        radial-gradient(420px 220px at 90% 70%, rgba(160,180,255,.10), transparent 62%),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-    }
-    .notnow{
-      background:
-        radial-gradient(520px 280px at 25% 15%, rgba(198,74,108,.14), transparent 62%),
-        radial-gradient(420px 220px at 85% 70%, rgba(120,90,210,.12), transparent 62%),
-        linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
-    }
-
-    /* Buttons */
-    .btn{
-      width:100%;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding: 13px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      cursor:pointer;
-      font-weight: 700;
-      letter-spacing: .02em;
-      transition: transform .2s var(--ease), filter .2s var(--ease), box-shadow .35s var(--ease);
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      position:relative;
-      overflow:hidden;
-    }
-    .btn:active{ transform: translateY(1px) scale(.99); }
-    .btn:hover{ filter: brightness(1.06); }
-
-    .btn-primary{
-      background: linear-gradient(90deg, rgba(198,74,108,.78), rgba(255,122,168,.62));
-      box-shadow: 0 16px 30px rgba(198,74,108,.12);
-      color:#fff;
-    }
-    .btn-secondary{
-      background: linear-gradient(90deg, rgba(255,214,160,.60), rgba(255,160,180,.55));
-      color: rgba(10,10,14,.92);
-      border: 1px solid rgba(255,214,160,.22);
-      box-shadow: 0 16px 30px rgba(255,214,160,.10);
-    }
-    .btn-minimal{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.14);
-    }
-
-    .btn::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(closest-side, rgba(255,255,255,.18), transparent 60%);
-      transform: translateX(-40%) rotate(10deg);
-      opacity:0;
-      transition: opacity .3s var(--ease), transform .6s var(--ease);
-    }
-    .btn:hover::before{
-      opacity:1;
-      transform: translateX(40%) rotate(10deg);
-    }
-
-    /* Custom audio control */
-    .audio-wrap{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(255,214,160,.10), rgba(120,120,255,.08));
-      border: 1px solid rgba(255,214,160,.16);
-    }
-    .audio-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:44px; height:44px;
-      border-radius: 9999px;
-      border: 1px solid rgba(255,214,160,.20);
-      background: linear-gradient(135deg, rgba(198,74,108,.78), rgba(255,122,168,.62));
-      color:#fff;
-      cursor:pointer;
-      box-shadow: 0 14px 24px rgba(198,74,108,.14);
-      transition: transform .2s var(--ease), filter .2s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-      user-select:none;
-      flex:0 0 auto;
-    }
-    .audio-btn:active{ transform: translateY(1px) scale(.99); }
-    .audio-btn:hover{ filter: brightness(1.07); }
-
-    .audio-meta{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width:0;
-      flex:1 1 auto;
-    }
-    .audio-title{
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: .02em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .audio-status{
-      font-size: 12px;
-      color: rgba(255,255,255,.68);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .audio-dot{
-      width:8px; height:8px;
-      border-radius:9999px;
-      background: rgba(255,214,160,.70);
-      box-shadow: 0 0 14px rgba(255,214,160,.32);
-      opacity:.85;
-    }
-    .audio-dot.paused{
-      background: rgba(160,170,220,.65);
-      box-shadow:none;
-      opacity:.75;
-    }
-
-    /* Stasera content states */
-    .locked-cover{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      color: var(--muted);
-      opacity:0;
-      transform: translateY(6px);
-      transition: opacity .45s var(--ease), transform .45s var(--ease);
-    }
-    .sigil{
-      width:28px; height:28px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow: inset 0 0 20px rgba(255,255,255,.04);
-      flex:0 0 auto;
-    }
-    .sigil::before{
-      content:"✧";
-      color: rgba(255,214,160,.60);
-      font-size: 16px;
-      transform: translateY(-1px);
-    }
-
-    /* Reveal animation for "Prossima volta" */
-    .reveal{
-      overflow:hidden;
-      max-height: 0px;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: max-height .55s var(--ease), opacity .55s var(--ease), transform .55s var(--ease);
-    }
-    .reveal.show{
-      max-height: 220px;
-      opacity: 1;
-      transform: translateY(0);
-      margin-top: 12px;
-    }
-
-    /* Overlay */
-    .overlay{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      background: rgba(0,0,0,.52);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 30;
-      padding: 26px;
-      animation: fadeIn .25s ease;
-    }
-    .overlay.show{ display:flex; }
-    .overlay-card{
-      width: min(560px, 100%);
-      text-align:center;
-      padding: 22px 18px;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(5,8,16,.72), rgba(12,14,22,.68));
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: var(--shadow);
-      animation: fadeUp .3s var(--ease);
-      position:relative;
-      overflow:hidden;
-    }
-    .overlay-card::before{
-      content:"";
-      position:absolute; inset:-20px;
-      background: radial-gradient(closest-side at 40% 20%, rgba(255,214,160,.16), transparent 60%);
-      filter: blur(10px);
-      opacity:.8;
-      pointer-events:none;
-    }
-    @keyframes fadeUp{
-      from{ transform: translateY(10px) scale(.99); opacity:0; }
-      to{ transform: translateY(0) scale(1); opacity:1; }
-    }
-
-    /* Final note */
-    .final{
-      min-height: 36vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      opacity:0;
-      transition: opacity .7s var(--ease);
-    }
-    .final.show{ opacity:1; }
-    .final p{
-      font-family: "Dancing Script", cursive;
-      font-size: clamp(26px, 7vw, 34px);
-      color: var(--text);
-      text-shadow: 0 12px 22px rgba(0,0,0,.30);
-      margin:0;
-    }
-
-    /* Desktop tweak */
-    @media (min-width: 760px){
-      :root{ --pad: 22px; }
-      .card{ padding: 18px; }
-      .sectionlabel-removed{ font-size: 12px; }
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      html{ scroll-behavior:auto; }
-      .blob, .hero-bg{ animation:none !important; }
-      .hero-title, .hero-sub{ animation:none !important; opacity:1; transform:none; }
-      .card{ transition:none; opacity:1; transform:none; }
-      .overlay, .overlay-card{ animation:none; }
-    }
-  
-    /* ===== FLIP INTERACTION (tap-to-reveal) ===== */
-
-    /* ===== FLIP TWEAKS (iOS/Safari fix per backside blank) ===== */
-    .card.flip{
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-    }
-    .card.flip{
-      -webkit-backdrop-filter: none; /* evita glitch con 3D */
-      backdrop-filter: none;
-    }
-    .flip-inner{
-      -webkit-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-      transform-origin: center;
-    }
-    .flip-face{
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-    .flip-back{
-      transform: rotateX(180deg) translateZ(1px);
-    }
-    .card.open .flip-inner{
-      transform: rotateX(180deg) translateZ(1px);
-    }
-
-    .card.flip{
-      perspective: 1200px;
-      cursor: pointer;
-    }
-    .flip-inner{
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform .75s var(--ease);
-      will-change: transform;
-      min-height: 110px;
-    }
-    .card.open .flip-inner{
-      transform: rotateX(180deg);
-    }
-    .flip-face{
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      transform: translateZ(0);
-    }
-    .flip-front{
-      position: relative;
-    }
-    .flip-front{ transform: translateZ(1px); }
-    .flip-back{
-      position: absolute;
-      inset: 0;
-      transform: rotateX(180deg);
-    }
-    .tap-hint{
-      margin: 0;
-      color: rgba(255,255,255,.70);
-      font-size: 13px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .tap-hint .chev{
-      width: 10px; height: 10px;
-      border-right: 2px solid rgba(255,214,160,.65);
-      border-bottom: 2px solid rgba(255,214,160,.65);
-      transform: rotate(-45deg);
-      opacity: .9;
-      flex: 0 0 auto;
-    }
-    .front-title{
-      font-family: Cinzel, serif;
-      font-size: 22px;
-      letter-spacing: .04em;
-      margin: 0 0 6px;
-      text-transform: lowercase;
-    }
-    .front-sub{
-      margin: 0 0 10px 0;
-      color: rgba(255,255,255,.68);
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-  
-    /* ===== FIX FLIP (Chrome/Android) - override final ===== */
-    .card.flip { perspective: 1200px; }
-    .flip-inner { position: relative; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
-    .flip-front, .flip-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-    .flip-front { position: relative; transform: translateZ(2px); }
-    .flip-back { position: absolute; inset: 0; transform: rotateX(180deg) translateZ(2px); }
-    .card.open .flip-inner { transform: rotateX(180deg); }
-
-  </style>
+        .muted {
+            opacity: .7;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
-  <!-- Global floating accents -->
-  <div class="global-accents" aria-hidden="true">
-    <div class="blob a"></div>
-    <div class="blob b"></div>
-    <div class="blob c"></div>
-  </div>
 
-  <!-- HERO -->
-  <section class="hero" id="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-glow" aria-hidden="true"></div>
-    <div class="stars" id="stars" aria-hidden="true"></div>
+    <main class="wrap">
 
-    <div class="hero-inner">
-      <h1 class="hero-title">il tuo posto giusto</h1>
-      <p class="hero-sub">senza dover chiedere</p>
-    </div>
+        <!-- ORA -->
+        <section class="card flip" id="oraCard">
+            <div class="flip-inner">
 
-    <div class="scroll-hint" aria-hidden="true">Scorri</div>
-  </section>
-
-  <main class="wrap">
-    <!-- ORA -->
-<section class="card ora flip" id="oraCard">
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div class="card-body">
-            <h3 class="front-title">ora</h3>
-            <p class="front-sub">Un istante piccolo. Solo tuo.</p>
-            <p class="tap-hint"><span class="chev" aria-hidden="true"></span><span>Tocca per scoprire</span></p>
-          </div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="card-body">
-            <p class="muted">Un istante semplice, qui e ora.</p>
-
-            <!-- AUDIO: cambia qui il file -->
-            <audio id="audioEl" preload="none">
-              <source src="audio/ep01.mp3" type="audio/mpeg" />
-            </audio>
-
-            <div class="audio-wrap">
-              <button class="audio-btn" id="audioBtn" type="button" aria-label="Play/Pause">
-                <span id="audioIcon" aria-hidden="true">▶</span>
-              </button>
-              <div class="audio-meta">
-                <div class="audio-title">Un piccolo segnale</div>
-                <div class="audio-status">
-                  <span class="audio-dot paused" id="audioDot" aria-hidden="true"></span>
-                  <span id="audioLabel">Riproduci</span>
+                <div class="flip-face">
+                    <h3 class="front-title">ora</h3>
+                    <p class="front-sub">Un istante piccolo. Solo tuo.</p>
                 </div>
-              </div>
+
+                <div class="flip-face flip-back">
+                    <p class="muted">Scegli cosa ascoltare.</p>
+
+                    <audio id="audioPlayer" preload="none"></audio>
+
+                    <div class="audio-wrap">
+                        <button class="audio-btn" id="playBtn">▶</button>
+
+                        <div>
+                            <div id="currentTitle">Seleziona un episodio</div>
+                            <div>
+                                <span class="audio-dot paused" id="audioDot"></span>
+                                <span id="audioLabel">Riproduci</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="episodeList"
+                        style="display:flex; flex-direction:column; gap:8px;">
+                    </div>
+
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- STASERA -->
-<section class="card stasera locked flip" id="staseraCard">
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div class="card-body">
-            <h3 class="front-title">stasera</h3>
-            <p class="front-sub">C'è una porta. Ma si apre quando è il momento.</p>
-            <p class="tap-hint"><span class="chev" aria-hidden="true"></span><span>Tocca per scoprire</span></p>
-          </div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="card-body">
-            <div id="staseraContent"></div>
-</div>
-        </div>
-      </div>
-    </section>
+        <!-- PROSSIMA VOLTA -->
+        <section class="card flip">
+            <div class="flip-inner">
 
-    <!-- PROSSIMA VOLTA -->
-<section class="card next flip" id="nextCard">
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div class="card-body">
-            <h3 class="front-title">prossima volta</h3>
-            <p class="front-sub">Non è un piano. È un invito.</p>
-            <p class="tap-hint"><span class="chev" aria-hidden="true"></span><span>Tocca per scoprire</span></p>
-          </div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="card-body">
-            <button id="nextReveal" class="btn btn-primary" type="button">Mostra</button>
+                <div class="flip-face">
+                    <h3 class="front-title">prossima volta</h3>
+                    <p class="front-sub">Non è un piano. È un invito.</p>
+                </div>
 
-            <div id="nextHidden" class="reveal" aria-hidden="true">
-             <div id="nextHidden">
-  <iframe 
-    src="https://www.google.com/maps/d/embed?mid=XXXXXXXXXXXX"
-    width="100%" 
-    height="400" 
-    style="border:0; border-radius:16px; margin-top:10px;"
-    allowfullscreen>
-  </iframe>
+                <div class="flip-face flip-back">
+                    <p class="muted">
+                        Il prossimo passo non si spiega.
+                        Si raggiunge.
+                    </p>
+
+                    <a href="https://www.google.com/maps"
+                        target="_blank"
+                        class="btn btn-primary">
+                        Apri su Google Maps
+                    </a>
+                </div>
+
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- NON ADESSO -->
-<section class="card notnow flip" id="notnowCard">
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div class="card-body">
-            <h3 class="front-title">non adesso</h3>
-            <p class="front-sub">Va bene anche così. Nessuna pressione.</p>
-            <p class="tap-hint"><span class="chev" aria-hidden="true"></span><span>Tocca per scoprire</span></p>
-          </div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="card-body">
-            <button id="nnBtn" class="btn btn-minimal" type="button">Va bene</button>
-          </div>
-        </div>
-      </div>
-    </section>
+    </main>
 
-    <!-- FINALE -->
-    <section class="final" id="final">
-      <p>Non finisce qui.</p>
-    </section>
-  </main>
+    <script>
 
-  <!-- OVERLAY -->
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Messaggio">
-    <div class="overlay-card" id="overlayCard">
-      <p style="margin:0; position:relative;">Non è ancora il momento.</p>
-      <p class="muted" style="margin:10px 0 0; font-size:13px; position:relative;">Tocca fuori o scorri per chiudere.</p>
-    </div>
-  </div>
-
-<script>
-  // =========================
-  // Stars generation + parallax on scroll
-  // =========================
-  (function () {
-    const stars = document.getElementById("stars");
-    if (!stars) return;
-
-    const count = 26;
-    const h = () => window.innerHeight;
-
-    for (let i = 0; i < count; i++) {
-      const s = document.createElement("div");
-      s.className = "star";
-      const x = Math.random() * 100;
-      const y = Math.random() * 100;
-      const size = Math.random() < 0.15 ? 3 : 2;
-
-      s.style.left = x + "%";
-      s.style.top = y + "%";
-      s.style.width = size + "px";
-      s.style.height = size + "px";
-      s.style.opacity = String(0.45 + Math.random() * 0.55);
-      stars.appendChild(s);
-    }
-
-    function onScroll() {
-      const hero = document.getElementById("hero");
-      if (!hero) return;
-
-      const rect = hero.getBoundingClientRect();
-      const prog = Math.min(Math.max(1 - rect.bottom / h(), 0), 1); // 0->1 as we scroll away
-
-      stars.style.transform = "translateY(" + -40 * prog + "px)";
-      stars.style.opacity = String(0.65 - 0.4 * prog);
-    }
-
-    document.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-  })();
-
-  // =========================
-  // Cards: enter animation when in viewport
-  // =========================
-  (function () {
-    const cards = document.querySelectorAll(".card");
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            obs.unobserve(e.target);
-          }
+        // FLIP
+        document.querySelectorAll(".card").forEach(card => {
+            card.addEventListener("click", e => {
+                if (e.target.closest("button") || e.target.closest("a")) return;
+                card.classList.toggle("open");
+            });
         });
-      },
-      { threshold: 0.18 }
-    );
 
-    cards.forEach((c) => obs.observe(c));
-  })();
+        // PODCAST MULTI EPISODIO
+        (function () {
 
-  // =========================
-  // ORA: custom audio control
-  // =========================
-  (function () {
-    const audio = document.getElementById("audioEl");
-    const btn = document.getElementById("audioBtn");
-    const label = document.getElementById("audioLabel");
-    const dot = document.getElementById("audioDot");
-    const icon = document.getElementById("audioIcon");
+            const episodes = [
+                { title: "Episodio 1 – Un piccolo segnale", file: "audio/ep01.mp3" },
+                { title: "Episodio 2 – Il secondo passo", file: "audio/ep02.mp3" },
+                { title: "Episodio 3 – Più vicino", file: "audio/ep03.mp3" }
+            ];
 
-    if (!audio || !btn) return;
+            const player = document.getElementById("audioPlayer");
+            const playBtn = document.getElementById("playBtn");
+            const title = document.getElementById("currentTitle");
+            const dot = document.getElementById("audioDot");
+            const label = document.getElementById("audioLabel");
+            const list = document.getElementById("episodeList");
 
-    function setState(playing) {
-      if (playing) {
-        label.textContent = "Pausa";
-        dot.classList.remove("paused");
-        icon.textContent = "❚❚";
-      } else {
-        label.textContent = "Riproduci";
-        dot.classList.add("paused");
-        icon.textContent = "▶";
-      }
-    }
+            let current = null;
 
-    btn.addEventListener("click", async (e) => {
-      e.preventDefault();
+            function setState(playing) {
+                if (playing) {
+                    playBtn.textContent = "❚❚";
+                    label.textContent = "Pausa";
+                    dot.classList.remove("paused");
+                } else {
+                    playBtn.textContent = "▶";
+                    label.textContent = "Riproduci";
+                    dot.classList.add("paused");
+                }
+            }
 
-      try {
-        if (audio.paused) {
-          await audio.play();
-          setState(true);
-        } else {
-          audio.pause();
-          setState(false);
-        }
-      } catch (err) {
-        // Autoplay policy / gesture required
-        setState(false);
-        console.warn("Audio non avviabile senza gesto utente:", err);
-      }
-    });
+            function loadEpisode(i) {
+                current = i;
+                player.src = episodes[i].file;
+                title.textContent = episodes[i].title;
+                setState(false);
+            }
 
-    audio.addEventListener("ended", () => setState(false));
-    audio.addEventListener("pause", () => setState(false));
-    audio.addEventListener("play", () => setState(true));
+            playBtn.addEventListener("click", async () => {
+                if (current === null) return;
 
-    setState(false);
-  })();
+                if (player.paused) {
+                    await player.play();
+                    setState(true);
+                } else {
+                    player.pause();
+                    setState(false);
+                }
+            });
 
-  // =========================
-  // STASERA: time-gated content
-  // - Contenuto mostrato SOLO dopo il tap (flip aperto)
-  // =========================
-  (function () {
-    const dot = document.getElementById("staseraDot"); // può essere null: ok
-    const card = document.getElementById("staseraCard");
+            player.addEventListener("ended", () => setState(false));
 
-    function computeAfter() {
-      const now = new Date();
-      const h = now.getHours();
-      const m = now.getMinutes();
+            episodes.slice().reverse().forEach((ep, i) => {
 
-      // >>> CAMBIA QUI L'ORARIO (HH:MM) <<<
-      // esempio: sblocca alle 12:30
-      return h > 12 || (h === 12 && m >= 30);
-    }
+                const realIndex = episodes.length - 1 - i;
 
-    function locked(cont) {
-      if (card) {
-        card.classList.add("locked");
-        card.classList.remove("unlocked");
-      }
+                const btn = document.createElement("button");
+                btn.textContent = ep.title;
+                btn.className = "btn btn-minimal";
+                btn.onclick = () => loadEpisode(realIndex);
 
-      if (dot) {
-        dot.style.background = "rgba(160,170,220,.55)";
-        dot.style.boxShadow = "none";
-      }
+                list.appendChild(btn);
+            });
 
-      cont.innerHTML = `
-        <div class="locked-cover" style="opacity:1; transform:translateY(0);">
-          <div class="sigil" aria-hidden="true"></div>
-          <p style="margin:0">Non ancora. Ma ci siamo.</p>
-        </div>
-      `;
-    }
+        })();
 
-    function unlocked(cont) {
-      if (card) {
-        card.classList.remove("locked");
-        card.classList.add("unlocked");
-      }
-
-      if (dot) {
-        dot.style.background = "var(--gold)";
-        dot.style.boxShadow = "0 0 14px rgba(255,214,160,.55)";
-      }
-
-      cont.innerHTML = `
-        <p class="muted" style="margin:0 0 12px">Adesso sì.</p>
-        <a class="btn btn-primary"
-           href="https://open.spotify.com/playlist/6s70PQMniR41caxpyoWTVM?si=95b45d85d7d84f1b"
-           target="_blank"
-           rel="noopener noreferrer">
-           Apri la playlist
-        </a>
-      `;
-    }
-
-    function render(force = false) {
-      const cont = document.getElementById("staseraContent");
-      if (!cont) return;
-
-      // niente anteprima: aggiorna solo se la card è aperta (o se forzato)
-      if (!force && card && !card.classList.contains("open")) return;
-
-      if (computeAfter()) unlocked(cont);
-      else locked(cont);
-    }
-
-    // chiamata quando apri la card
-    window.__renderStasera = () => render(true);
-
-    // se la card resta aperta, aggiorna ogni 30s
-    setInterval(() => render(false), 30000);
-  })();
-
-  // =========================
-  // PROSSIMA VOLTA: reveal
-  // =========================
-  (function () {
-    const reveal = document.getElementById("nextReveal");
-    const hidden = document.getElementById("nextHidden");
-    if (!reveal || !hidden) return;
-
-    reveal.addEventListener("click", (e) => {
-      e.preventDefault();
-      reveal.style.display = "none";
-      hidden.classList.add("show");
-      hidden.setAttribute("aria-hidden", "false");
-    });
-  })();
-
-  // =========================
-  // NON ADESSO: overlay open/close by outside tap or scroll
-  // =========================
-  (function () {
-    const btn = document.getElementById("nnBtn");
-    const overlay = document.getElementById("overlay");
-    const card = document.getElementById("overlayCard");
-
-    if (!btn || !overlay || !card) return;
-
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      overlay.classList.add("show");
-    });
-
-    function closeIfOutside(e) {
-      if (overlay.classList.contains("show") && !card.contains(e.target)) {
-        overlay.classList.remove("show");
-      }
-    }
-
-    overlay.addEventListener("mousedown", closeIfOutside);
-    overlay.addEventListener("touchstart", closeIfOutside, { passive: true });
-
-    document.addEventListener(
-      "scroll",
-      () => {
-        if (overlay.classList.contains("show")) {
-          overlay.classList.remove("show");
-        }
-      },
-      { passive: true }
-    );
-  })();
-
-  // =========================
-  // Tap-to-reveal (flip cards)  <<< PARTE "DI PRIMA"
-  // - Tocca la card per girarla
-  // - Tocca di nuovo per richiuderla
-  // - Quando apri STASERA, popola il retro
-  // =========================
-  (function () {
-    const cards = document.querySelectorAll(".card.flip");
-
-    cards.forEach((card) => {
-      card.addEventListener("click", (e) => {
-        if (e.target.closest("button") || e.target.closest("a")) return;
-
-        card.classList.toggle("open");
-
-        if (card.id === "staseraCard" && card.classList.contains("open")) {
-          window.__renderStasera && window.__renderStasera();
-        }
-      });
-    });
-  })();
-
-  // =========================
-  // Final note appears when in viewport
-  // =========================
-  (function () {
-    const final = document.getElementById("final");
-    if (!final) return;
-
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          final.classList.add("show");
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.55 }
-    );
-
-    obs.observe(final);
-  })();
-</script>
-</body>
-</html>
+    </script>
 
 </body>
 </html>
+
