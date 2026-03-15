@@ -13,113 +13,111 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* =========================================================
-      ESPERIENZA EMOTIVA (mobile-first)
-      - Apribile da NFC: impatto immediato
-      - Nessun contenuto informativo: è una mini-storia interattiva
-      - Palette: blu notte / indaco / viola + accenti oro tenue + rosa vellutato
-      - Motion lento (20–30s)
-    ========================================================= */
+.easter-scene{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:-1;
+overflow:hidden;
+}
 
-    :root{
-      --night:#0B1C2D;
-      --indigo:#12193a;
-      --violet:#2b1a4a;
-      --violet2:#3b2a6b;
+/* cielo pasquale */
 
-      --rose:#ff7aa8;
-      --velvet:#c64a6c;
+body{
+background:
+radial-gradient(circle at 20% 20%, #fff0f6, transparent 40%),
+radial-gradient(circle at 80% 10%, #e8dcff, transparent 45%),
+radial-gradient(circle at 50% 90%, #dff4ff, transparent 45%),
+linear-gradient(180deg,#fff8fc,#f4ecff);
+}
 
-      --gold:#ffd6a0; /* oro tenue */
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --glass:rgba(255,255,255,.07);
-      --glass2:rgba(255,255,255,.10);
-      --border:rgba(255,255,255,.14);
+/* ===== CONIGLIETTO ===== */
 
-      --shadow: 0 18px 40px rgba(0,0,0,.35);
-      --shadow-soft: 0 12px 28px rgba(0,0,0,.26);
-      --radius: 18px;
+.bunny{
+position:absolute;
+bottom:40px;
+right:40px;
+width:120px;
+height:140px;
+background:#fff;
+border-radius:60px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
 
-      --max: 920px;
-      --pad: 18px;
+.bunny::before,
+.bunny::after{
+content:"";
+position:absolute;
+width:30px;
+height:70px;
+background:#fff;
+border-radius:20px;
+top:-50px;
+}
 
-      --h1: clamp(34px, 7.2vw, 56px);
-      --h2: 14px;
-      --p: 15px;
+.bunny::before{
+left:20px;
+}
 
-      --ease: cubic-bezier(.2,.8,.2,1);
-    }
+.bunny::after{
+right:20px;
+}
 
-    *{ box-sizing:border-box; }
-    html,body{ margin:0; padding:0; }
-    html{ scroll-behavior:smooth; }
-    body{
-      min-height:100vh;
-      background: var(--night);
-      color: var(--text);
-      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      overflow-x:hidden;
-    }
+/* ===== UOVA ===== */
 
-    /* background accents (global wow) */
-    .global-accents{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:0;
-      animation: fadeIn .6s ease-out forwards;
-      z-index:0;
-    }
-    .blob{
-      position:absolute;
-      filter: blur(56px);
-      border-radius:9999px;
-      opacity:.22;
-      transform: translateZ(0);
-      will-change: transform;
-    }
-    .blob.a{
-      width: 22rem; height: 22rem;
-      left: -6rem; top: -6rem;
-      background: #7c6fd1;
-      animation: floatA 22s ease-in-out infinite;
-    }
-    .blob.b{
-      width: 22rem; height: 22rem;
-      right: -7rem; bottom: -7rem;
-      background: #5970d6;
-      animation: floatB 26s ease-in-out infinite;
-    }
-    .blob.c{
-      width: 16rem; height: 16rem;
-      left: 50%; top: 55%;
-      transform: translate(-50%,-50%);
-      background: var(--gold);
-      filter: blur(72px);
-      opacity:.16;
-      animation: pulse 24s ease-in-out infinite;
-    }
+.egg{
+position:absolute;
+width:60px;
+height:80px;
+border-radius:50%;
+background:linear-gradient(#ffd6ec,#ffb3da);
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+animation:eggFloat 6s ease-in-out infinite;
+}
 
-    @keyframes fadeIn{ to{ opacity:1; } }
-    @keyframes floatA{
-      0%{ transform:translate(0,0); }
-      25%{ transform:translate(26px,-14px); }
-      50%{ transform:translate(-14px,12px); }
-      75%{ transform:translate(10px,-8px); }
-      100%{ transform:translate(0,0); }
-    }
-    @keyframes floatB{
-      0%{ transform:translate(0,0); }
-      25%{ transform:translate(-18px,16px); }
-      50%{ transform:translate(12px,-10px); }
-      75%{ transform:translate(-10px,10px); }
-      100%{ transform:translate(0,0); }
-    }
-    @keyframes pulse{
-      0%,100%{ transform:translate(-50%,-50%) scale(1); }
-      50%{ transform:translate(-50%,-50%) scale(1.08); }
-    }
+.egg1{
+left:10%;
+bottom:120px;
+}
 
+.egg2{
+left:25%;
+bottom:60px;
+animation-delay:2s;
+background:linear-gradient(#fff3b0,#ffe27a);
+}
+
+.egg3{
+right:20%;
+bottom:120px;
+animation-delay:4s;
+background:linear-gradient(#d8c6ff,#bba8ff);
+}
+
+@keyframes eggFloat{
+0%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+100%{transform:translateY(0)}
+}
+
+/* ===== PETALI ===== */
+
+.petals{
+position:absolute;
+inset:0;
+background-image:
+radial-gradient(circle,#ffd6ec 2px,transparent 2px),
+radial-gradient(circle,#fff3b0 2px,transparent 2px),
+radial-gradient(circle,#e8dcff 2px,transparent 2px);
+background-size:120px 120px;
+opacity:.35;
+animation:petalMove 60s linear infinite;
+}
+
+@keyframes petalMove{
+from{background-position:0 0}
+to{background-position:0 1000px}
+}
     /* HERO */
     .hero{
       position:relative;
@@ -787,11 +785,17 @@
 
 <body>
   <!-- Global floating accents -->
-  <div class="global-accents" aria-hidden="true">
-    <div class="blob a"></div>
-    <div class="blob b"></div>
-    <div class="blob c"></div>
-  </div>
+<div class="easter-scene">
+
+<div class="bunny"></div>
+
+<div class="egg egg1"></div>
+<div class="egg egg2"></div>
+<div class="egg egg3"></div>
+
+<div class="petals"></div>
+
+</div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
