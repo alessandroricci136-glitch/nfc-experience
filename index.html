@@ -13,110 +13,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
-.easter-scene{
+/* ===== PASQUA DECORAZIONI ===== */
+
+.easter-layer{
 position:fixed;
 inset:0;
 pointer-events:none;
-z-index:-1;
-overflow:hidden;
-}
-
-/* cielo pasquale */
-
-body{
-background:
-radial-gradient(circle at 20% 20%, #fff0f6, transparent 40%),
-radial-gradient(circle at 80% 10%, #e8dcff, transparent 45%),
-radial-gradient(circle at 50% 90%, #dff4ff, transparent 45%),
-linear-gradient(180deg,#fff8fc,#f4ecff);
-}
-
-/* ===== CONIGLIETTO ===== */
-
-.bunny{
-position:absolute;
-bottom:40px;
-right:40px;
-width:120px;
-height:140px;
-background:#fff;
-border-radius:60px;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
-}
-
-.bunny::before,
-.bunny::after{
-content:"";
-position:absolute;
-width:30px;
-height:70px;
-background:#fff;
-border-radius:20px;
-top:-50px;
-}
-
-.bunny::before{
-left:20px;
-}
-
-.bunny::after{
-right:20px;
-}
-
-/* ===== UOVA ===== */
-
-.egg{
-position:absolute;
-width:60px;
-height:80px;
-border-radius:50%;
-background:linear-gradient(#ffd6ec,#ffb3da);
-box-shadow:0 10px 20px rgba(0,0,0,.08);
-animation:eggFloat 6s ease-in-out infinite;
-}
-
-.egg1{
-left:10%;
-bottom:120px;
-}
-
-.egg2{
-left:25%;
-bottom:60px;
-animation-delay:2s;
-background:linear-gradient(#fff3b0,#ffe27a);
-}
-
-.egg3{
-right:20%;
-bottom:120px;
-animation-delay:4s;
-background:linear-gradient(#d8c6ff,#bba8ff);
-}
-
-@keyframes eggFloat{
-0%{transform:translateY(0)}
-50%{transform:translateY(-12px)}
-100%{transform:translateY(0)}
-}
-
-/* ===== PETALI ===== */
-
-.petals{
-position:absolute;
-inset:0;
+z-index:1;
+opacity:.25;
 background-image:
-radial-gradient(circle,#ffd6ec 2px,transparent 2px),
-radial-gradient(circle,#fff3b0 2px,transparent 2px),
-radial-gradient(circle,#e8dcff 2px,transparent 2px);
-background-size:120px 120px;
-opacity:.35;
-animation:petalMove 60s linear infinite;
+
+url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>\
+<ellipse cx='60' cy='70' rx='24' ry='32' fill='%23ffd6ec'/>\
+<ellipse cx='60' cy='70' rx='24' ry='32' fill='none' stroke='%23ff9ecb' stroke-width='3' stroke-dasharray='6 6'/>\
+</svg>"),
+
+url(\"data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>\
+<circle cx='60' cy='70' r='22' fill='%23fff3b0'/>\
+<rect x='48' y='20' width='12' height='30' rx='6' fill='%23fff3b0'/>\
+<rect x='72' y='20' width='12' height='30' rx='6' fill='%23fff3b0'/>\
+<circle cx='54' cy='68' r='3' fill='%23444'/>\
+<circle cx='66' cy='68' r='3' fill='%23444'/>\
+</svg>\");
+
+background-size:220px 220px;
+background-repeat:repeat;
+animation:easterFloat 40s linear infinite;
 }
 
-@keyframes petalMove{
+@keyframes easterFloat{
 from{background-position:0 0}
-to{background-position:0 1000px}
+to{background-position:0 800px}
 }
     /* HERO */
     .hero{
@@ -785,17 +714,7 @@ to{background-position:0 1000px}
 
 <body>
   <!-- Global floating accents -->
-<div class="easter-scene">
-
-<div class="bunny"></div>
-
-<div class="egg egg1"></div>
-<div class="egg egg2"></div>
-<div class="egg egg3"></div>
-
-<div class="petals"></div>
-
-</div>
+<div class="easter-layer"></div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
