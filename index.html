@@ -13,40 +13,113 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
-/* ===== PASQUA DECORAZIONI ===== */
+    /* =========================================================
+      ESPERIENZA EMOTIVA (mobile-first)
+      - Apribile da NFC: impatto immediato
+      - Nessun contenuto informativo: è una mini-storia interattiva
+      - Palette: blu notte / indaco / viola + accenti oro tenue + rosa vellutato
+      - Motion lento (20–30s)
+    ========================================================= */
 
-.easter-layer{
-position:fixed;
-inset:0;
-pointer-events:none;
-z-index:1;
-opacity:.25;
-background-image:
+    :root{
+      --night:#0B1C2D;
+      --indigo:#12193a;
+      --violet:#2b1a4a;
+      --violet2:#3b2a6b;
 
-url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>\
-<ellipse cx='60' cy='70' rx='24' ry='32' fill='%23ffd6ec'/>\
-<ellipse cx='60' cy='70' rx='24' ry='32' fill='none' stroke='%23ff9ecb' stroke-width='3' stroke-dasharray='6 6'/>\
-</svg>"),
+      --rose:#ff7aa8;
+      --velvet:#c64a6c;
 
-url(\"data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>\
-<circle cx='60' cy='70' r='22' fill='%23fff3b0'/>\
-<rect x='48' y='20' width='12' height='30' rx='6' fill='%23fff3b0'/>\
-<rect x='72' y='20' width='12' height='30' rx='6' fill='%23fff3b0'/>\
-<circle cx='54' cy='68' r='3' fill='%23444'/>\
-<circle cx='66' cy='68' r='3' fill='%23444'/>\
-</svg>\");
+      --gold:#ffd6a0; /* oro tenue */
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --glass:rgba(255,255,255,.07);
+      --glass2:rgba(255,255,255,.10);
+      --border:rgba(255,255,255,.14);
 
-background-size:220px 220px;
-background-repeat:repeat;
-animation:easterFloat 40s linear infinite;
-}
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --shadow-soft: 0 12px 28px rgba(0,0,0,.26);
+      --radius: 18px;
 
-@keyframes easterFloat{
-from{background-position:0 0}
-to{background-position:0 800px}
-}
+      --max: 920px;
+      --pad: 18px;
+
+      --h1: clamp(34px, 7.2vw, 56px);
+      --h2: 14px;
+      --p: 15px;
+
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; }
+    html{ scroll-behavior:smooth; }
+    body{
+      min-height:100vh;
+      background: var(--night);
+      color: var(--text);
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow-x:hidden;
+    }
+
+    /* background accents (global wow) */
+    .global-accents{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:0;
+      animation: fadeIn .6s ease-out forwards;
+      z-index:0;
+    }
+    .blob{
+      position:absolute;
+      filter: blur(56px);
+      border-radius:9999px;
+      opacity:.22;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+    .blob.a{
+      width: 22rem; height: 22rem;
+      left: -6rem; top: -6rem;
+      background: #7c6fd1;
+      animation: floatA 22s ease-in-out infinite;
+    }
+    .blob.b{
+      width: 22rem; height: 22rem;
+      right: -7rem; bottom: -7rem;
+      background: #5970d6;
+      animation: floatB 26s ease-in-out infinite;
+    }
+    .blob.c{
+      width: 16rem; height: 16rem;
+      left: 50%; top: 55%;
+      transform: translate(-50%,-50%);
+      background: var(--gold);
+      filter: blur(72px);
+      opacity:.16;
+      animation: pulse 24s ease-in-out infinite;
+    }
+
+    @keyframes fadeIn{ to{ opacity:1; } }
+    @keyframes floatA{
+      0%{ transform:translate(0,0); }
+      25%{ transform:translate(26px,-14px); }
+      50%{ transform:translate(-14px,12px); }
+      75%{ transform:translate(10px,-8px); }
+      100%{ transform:translate(0,0); }
+    }
+    @keyframes floatB{
+      0%{ transform:translate(0,0); }
+      25%{ transform:translate(-18px,16px); }
+      50%{ transform:translate(12px,-10px); }
+      75%{ transform:translate(-10px,10px); }
+      100%{ transform:translate(0,0); }
+    }
+    @keyframes pulse{
+      0%,100%{ transform:translate(-50%,-50%) scale(1); }
+      50%{ transform:translate(-50%,-50%) scale(1.08); }
+    }
+
     /* HERO */
     .hero{
       position:relative;
@@ -714,7 +787,11 @@ to{background-position:0 800px}
 
 <body>
   <!-- Global floating accents -->
-<div class="easter-layer"></div>
+  <div class="global-accents" aria-hidden="true">
+    <div class="blob a"></div>
+    <div class="blob b"></div>
+    <div class="blob c"></div>
+  </div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
@@ -1264,5 +1341,4 @@ to{background-position:0 800px}
 </script>
 </body>
 </html>
-
 
