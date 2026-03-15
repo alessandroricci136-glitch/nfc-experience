@@ -1292,7 +1292,7 @@
       const now = new Date();
       const h = now.getHours();
       const m = now.getMinutes();
-      return h > 12 || (h === 12 && m >= 30);
+      return h > 00 || (h === 00 && m >= 30);
     }
 
     function locked(cont) {
@@ -1437,7 +1437,7 @@
         card.classList.toggle("open");
         requestAnimationFrame(() => window.__syncFlipHeight && window.__syncFlipHeight(card));
 
-        if (card.id === "staseraCard" && card.classList.contains("open")) {
+        if (card.id === "Card" && card.classList.contains("open")) {
           window.__renderStasera && window.__renderStasera();
           requestAnimationFrame(() => window.__syncFlipHeight && window.__syncFlipHeight(card));
         }
